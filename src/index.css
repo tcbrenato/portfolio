@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@keyframes border-slide {
+  0% { transform: translateX(-100%) translateY(-100%); }
+  50% { transform: translateX(100%) translateY(100%); }
+  100% { transform: translateX(-100%) translateY(-100%); }
+}
+
+@keyframes border-slide-reverse {
+  0% { transform: translateX(100%) translateY(100%); }
+  50% { transform: translateX(-100%) translateY(-100%); }
+  100% { transform: translateX(100%) translateY(100%); }
+}
+
+.animate-border-slide {
+  animation: border-slide 6s linear infinite;
+}
+
+.animate-border-slide-reverse {
+  animation: border-slide-reverse 6s linear infinite;
+}
+
+@keyframes scale-in {
+  0% { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-scale-in {
+  animation: scale-in 0.15s ease-out forwards;
+}
