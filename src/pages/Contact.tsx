@@ -94,45 +94,101 @@ const Contact = () => {
 
   // Solution 3: Web3Forms (alternative gratuite à Formspree)
   const handleWeb3FormsSubmit = async () => {
-    try {
-      const response = await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          access_key: 'YOUR_WEB3FORMS_ACCESS_KEY', // À remplacer par votre clé
-          name: formData.name,
-          email: formData.email,
-          company: formData.company || 'Non spécifiée',
-          service: formData.service,
-          budget: formData.budget || 'Non spécifié',
-          timeline: formData.timeline || 'Non spécifié',
-          message: formData.message,
-          from_name: formData.name,
-          subject: `Nouvelle demande de projet - ${formData.name}`
-        }),
+    const isFormation = formData.service.includes('Formation');
+    
+    const autoReplyMessage = isFormation 
+      ? `Bonjour ${formData.name},\n\nMerci pour votre inscription à la formation :\n${formData.service}\n\n📋 INSTRUCTIONS D'INSCRIPTION :\n1. Versez le montant sur MTN/Moov : +229 01 92 37 77 77\n2. Envoyez le reçu sur WhatsApp : +229 01 92 37 77 77\n3. Vous recevrez votre convocation sous 24h\n\nPour toute question :\n📞 +229 01 92 37 77 77\n✉️ info@renatotchobo.com\n\nCordialement,\nRénato TCHOBO\nSolutions Digitales`
+      : `Bonjour ${formData.name},\n\nMerci pour votre message. J'ai bien reçu votre demande concernant : ${formData.service}.\n\nJe vous recontacterai sous 24h pour discuter de votre projet.\n\nPour toute urgence :\n📞 +229 01 92 37 77 77\n💬 WhatsApp : +229 01 92 37 77 77\n\nCordialement,\nRénato TCHOBO\nSolutions Digitales`;
+
+    const response = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        access_key: '63e99718-9bc7-475c-a348-516deda4a068',
+        name: formData.name,
+        email: formData.email,
+        company: formData.company || 'Non spécifiée',
+        service: formData.service,
+        budget: formData.budget || 'Non spécifié',
+        timeline: formData.timeline || 'Non spécifié',
+        message: formData.message,
+        subject: `${isFormation ? '🎓 Inscription Formation' : '💼 Nouveau Projet'} - ${formData.name}`,
+        from_name: 'Rénato TCHOBO',
+        replyto: formData.email,
+        botcheck: false,
+        // Auto reply
+        auto_reply: true,
+        auto_reply_subject: isFormation 
+          ? `🎓 Confirmation d'inscription - ${formData.service.split('(')[0].replace('Formation - ', '')}`
+          : `✅ Votre demande a bien été reçue`,
+        auto_reply_message: isFormation ? `
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
+  <div style="background: #0a1f3c; padding: 20px; border-radius: 8px 8px 0 0; text-align: center;">
+    <h1 style="color: #FCD116; margin: 0; font-size: 24px;">Rénato TCHOBO</h1>
+    <p style="color: #ffffff; margin: 5px 0 0;">Solutions Digitales</p>
+  </div>
+  <div style="padding: 30px; background: #ffffff;">
+    <h2 style="color: #0a1f3c;">🎓 Confirmation d'inscription</h2>
+    <p>Bonjour <strong>${formData.name}</strong>,</p>
+    <p>Votre inscription à la formation suivante a bien été enregistrée :</p>
+    <div style="background: #f5f5f5; padding: 15px; border-left: 4px solid #FCD116; margin: 20px 0;">
+      <strong style="color: #0a1f3c;">${formData.service}</strong>
+    </div>
+    <h3 style="color: #0a1f3c;">📋 Instructions d'inscription :</h3>
+    <ol style="color: #444; line-height: 1.8;">
+      <li>Versez le montant de la formation sur <strong>MTN/Moov Money : +229 01 92 37 77 77</strong></li>
+      <li>Envoyez le reçu de paiement sur <strong>WhatsApp : +229 01 92 37 77 77</strong></li>
+      <li>Vous recevrez votre convocation et le programme détaillé sous <strong>24h</strong></li>
+    </ol>
+    <div style="background: #0a1f3c; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center;">
+      <a href="https://wa.me/22901923777" style="color: #FCD116; text-decoration: none; font-weight: bold;">💬 Nous contacter sur WhatsApp</a>
+    </div>
+    <p style="color: #666; font-size: 14px;">Pour toute question : <a href="mailto:info@renatotchobo.com" style="color: #0a1f3c;">info@renatotchobo.com</a> | +229 01 92 37 77 77</p>
+  </div>
+  <div style="background: #f5f5f5; padding: 15px; text-align: center; border-radius: 0 0 8px 8px;">
+    <p style="color: #888; font-size: 12px; margin: 0;">© 2026 Rénato TCHOBO Solutions Digitales · renatotchobo.com</p>
+  </div>
+</div>` : `
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
+  <div style="background: #0a1f3c; padding: 20px; border-radius: 8px 8px 0 0; text-align: center;">
+    <h1 style="color: #FCD116; margin: 0; font-size: 24px;">Rénato TCHOBO</h1>
+    <p style="color: #ffffff; margin: 5px 0 0;">Solutions Digitales</p>
+  </div>
+  <div style="padding: 30px; background: #ffffff;">
+    <h2 style="color: #0a1f3c;">✅ Message bien reçu !</h2>
+    <p>Bonjour <strong>${formData.name}</strong>,</p>
+    <p>Merci pour votre message concernant : <strong>${formData.service}</strong></p>
+    <p>Je vous recontacterai dans les <strong>24 heures</strong> pour discuter de votre projet.</p>
+    <div style="background: #0a1f3c; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center;">
+      <a href="https://wa.me/22901923777" style="color: #FCD116; text-decoration: none; font-weight: bold;">💬 Discuter sur WhatsApp</a>
+    </div>
+    <p style="color: #666; font-size: 14px;">Pour toute urgence : <a href="mailto:info@renatotchobo.com" style="color: #0a1f3c;">info@renatotchobo.com</a> | +229 01 92 37 77 77</p>
+  </div>
+  <div style="background: #f5f5f5; padding: 15px; text-align: center; border-radius: 0 0 8px 8px;">
+    <p style="color: #888; font-size: 12px; margin: 0;">© 2026 Rénato TCHOBO Solutions Digitales · renatotchobo.com</p>
+  </div>
+</div>`,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      setIsSubmitted(true);
+      setFormData({
+        name: '',
+        email: '',
+        company: '',
+        service: '',
+        budget: '',
+        message: '',
+        timeline: ''
       });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setIsSubmitted(true);
-        setFormData({
-          name: '',
-          email: '',
-          company: '',
-          service: '',
-          budget: '',
-          message: '',
-          timeline: ''
-        });
-      } else {
-        throw new Error('Erreur Web3Forms: ' + data.message);
-      }
-    } catch (error) {
-      throw new Error('Erreur Web3Forms: ' + error);
+    } else {
+      throw new Error('Erreur Web3Forms: ' + data.message);
     }
   };
 
@@ -155,20 +211,20 @@ const Contact = () => {
 
       // Essayer plusieurs services dans l'ordre
       try {
-        // Tentative 1: Formspree
-        await handleFormspreeSubmit();
-      } catch (formspreeError) {
-        console.log('Formspree failed, trying EmailJS...');
+        // Tentative 1: Web3Forms
+        await handleWeb3FormsSubmit();
+      } catch (web3Error) {
+        console.log('Web3Forms failed, trying Formspree...');
         try {
-          // Tentative 2: EmailJS
-          await handleEmailJSSubmit();
-        } catch (emailjsError) {
-          console.log('EmailJS failed, trying Web3Forms...');
+          // Tentative 2: Formspree
+          await handleFormspreeSubmit();
+        } catch (formspreeError) {
+          console.log('Formspree failed, trying EmailJS...');
           try {
-            // Tentative 3: Web3Forms
-            await handleWeb3FormsSubmit();
-          } catch (web3Error) {
-            console.log('Web3Forms failed, trying Netlify...');
+            // Tentative 3: EmailJS
+            await handleEmailJSSubmit();
+          } catch (emailjsError) {
+            console.log('EmailJS failed, trying Netlify...');
             // Tentative 4: Netlify Forms
             await handleNetlifySubmit();
           }
@@ -300,6 +356,7 @@ ${formData.message}`;
   ];
 
   const services = [
+    // Services
     'Développement Web',
     'Application Mobile',
     'UI/UX Design',
@@ -307,10 +364,20 @@ ${formData.message}`;
     'SEO & Marketing Digital',
     'Solution Digitale Complète',
     'Consultation',
+    // Formations
+    'Formation - Stratégie digitale & Marketing (100 000 FCFA - 2 mois)',
+    'Formation - Design & Création visuelle (50 000 FCFA - 1 mois)',
+    'Formation - Développement Web & Vibe Coding (150 000 FCFA - 3 mois)',
+    'Formation - Gestion de projet & Organisation (150 000 FCFA - 3 mois)',
+    'Formation - Bureautique & Outils numériques (50 000 FCFA - 1 mois)',
+    'Formation - Marketing digital (50 000 FCFA - 2 semaines)',
     'Autre'
   ];
 
   const budgets = [
+    '50 000 FCFA (Formation 1 mois / 2 semaines)',
+    '100 000 FCFA (Formation 2 mois)',
+    '150 000 FCFA (Formation 3 mois)',
     'Moins de 100 000 FCFA',
     '100 000 - 300 000 FCFA',
     '300 000 - 500 000 FCFA',
