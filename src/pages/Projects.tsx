@@ -18,6 +18,66 @@ const Projects = () => {
 
   const projects = [
     {
+      id: 14,
+      title: 'COPAF 2026 – Plateforme Officielle de la Conférence des Ports Africains',
+      description: 'Plateforme complète pour la Conférence des Ports Africains 2026 (Casablanca) : inscription des participants, paiement, génération de badges et documents, tableau de bord administrateur.',
+      image: '/copaf.png',
+      category: 'web',
+      technologies: ['React', 'Vite', 'Supabase', 'GitHub Actions', 'Hostinger'],
+      features: ['Inscription et vérification de dossier en ligne', 'Génération automatique de badges et PDF officiels', 'Tableau de bord admin sécurisé', 'Interface bilingue français/anglais'],
+      liveUrl: 'https://copaf-ports.com',
+      githubUrl: 'https://github.com/tcbrenato',
+      status: 'En cours'
+    },
+    {
+      id: 15,
+      title: 'CINÉ LIFESTYLE + – Abonnements Films & Séries via Mobile Money',
+      description: 'Plateforme d\'abonnement à des catalogues Films/Séries avec paiement Mobile Money et accès automatisé à des canaux Telegram privés via bot dédié.',
+      image: '/cinelifestyle.png',
+      category: 'web',
+      technologies: ['React', 'Node.js', 'Supabase', 'KKiaPay', 'Telegram Bot'],
+      features: ['Abonnement et paiement Mobile Money (KKiaPay/FeexPay)', 'Accès et retrait automatique des canaux Telegram', 'Chat intégré client/admin', 'Gestion des expirations d\'abonnement'],
+      liveUrl: 'https://cine-lifestyle-frontend.vercel.app/',
+      githubUrl: 'https://github.com/tcbrenato/cine-lifestyle-frontend',
+      status: 'En cours'
+    },
+    {
+      id: 16,
+      title: 'Coordonnées CRF Perfection – Page de Liens Officiels',
+      description: 'Page web interactive regroupant tous les canaux officiels de CRF Perfection (site, COPAF, réseaux sociaux, WhatsApp, e-mails) avec un design premium.',
+      image: '/coordonnees.png',
+      category: 'web',
+      technologies: ['React', 'Vite', 'Hostinger', 'SEO'],
+      features: ['Tous les liens officiels regroupés en un seul endroit', 'Design premium marine et or', 'Déploiement automatisé (CI/CD)', 'SEO complet (sitemap, Open Graph, JSON-LD)'],
+      liveUrl: 'https://coordonnees.crfperfection.pro',
+      githubUrl: 'https://github.com/tcbrenato/coordonnees-crf-perfection',
+      status: 'Terminé'
+    },
+    {
+      id: 17,
+      title: 'RC PRO WASH – Plateforme de Commande de Lavage Auto',
+      description: 'Plateforme de commande en ligne pour un service de lavage automobile à domicile, avec calcul de prix par zone, espace client et tableau de bord admin.',
+      image: '/rcprowash.png',
+      category: 'ecommerce',
+      technologies: ['React', 'Supabase', 'EmailJS'],
+      features: ['Commande en ligne avec calcul de prix par quartier', 'Espace client avec historique des commandes', 'Tableau de bord admin (statistiques, statuts)', 'Notifications par e-mail'],
+      liveUrl: 'https://rcprowash.vercel.app',
+      githubUrl: 'https://github.com/tcbrenato',
+      status: 'En cours'
+    },
+    {
+      id: 18,
+      title: 'RenatoAgenda – Agenda Personnel Intelligent',
+      description: 'Outil d\'agenda personnel pour gérer programmes, tâches, lieux et contacts, avec un tableau de bord visuel et un assistant IA de résumé à venir.',
+      image: '/renatoagenda.png',
+      category: 'web',
+      technologies: ['React', 'Vite', 'Supabase', 'Vercel'],
+      features: ['Gestion de tâches et programmes avec lieu et contact', 'Calendrier visuel interactif', 'Tableau de bord par catégories (urgent, à venir, terminé)', 'Assistant IA de résumé et rappels (à venir)'],
+      liveUrl: '#',
+      githubUrl: 'https://github.com/tcbrenato/renatoagenda',
+      status: 'En cours'
+    },
+    {
       id: 1,
       title: 'MyProforma – Générateur de Proforma',
       description: 'Plateforme web de génération de factures proforma professionnelles, pensée pour les entrepreneurs et PME qui veulent aller vite et bien.',
@@ -180,8 +240,8 @@ const Projects = () => {
     : projects.filter(project => project.category === activeFilter);
 
   const stats = [
-    { number: '13+', label: 'Projets Réalisés' },
-    { number: '10+', label: 'Clients Satisfaits' },
+    { number: '18+', label: 'Projets Réalisés' },
+    { number: '12+', label: 'Clients Satisfaits' },
     { number: '98%', label: 'Projets Livrés à Temps' },
     { number: '5★', label: 'Note Moyenne' }
   ];
@@ -461,4 +521,4 @@ const Projects = () => {
   );
 };
 
-export default Projects; 
+export default Projects;
