@@ -26,7 +26,8 @@ jobs:
         env:
           VITE_GEMINI_API_KEY: ${{ secrets.VITE_GEMINI_API_KEY }}
           VITE_EMAILJS_SERVICE_ID: ${{ secrets.VITE_EMAILJS_SERVICE_ID }}
-          VITE_EMAILJS_TEMPLATE_ID: ${{ secrets.VITE_EMAILJS_TEMPLATE_ID }}
+          VITE_EMAILJS_TEMPLATE_ID_NOTIFY: ${{ secrets.VITE_EMAILJS_TEMPLATE_ID_NOTIFY }}
+          VITE_EMAILJS_TEMPLATE_ID_AUTOREPLY: ${{ secrets.VITE_EMAILJS_TEMPLATE_ID_AUTOREPLY }}
           VITE_EMAILJS_PUBLIC_KEY: ${{ secrets.VITE_EMAILJS_PUBLIC_KEY }}
 
       - name: Deploy to Hostinger via FTP

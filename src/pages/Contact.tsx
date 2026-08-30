@@ -22,13 +22,14 @@ const Contact = () => {
   const { elementRef: formRef, isVisible: formVisible } = useScrollAnimation();
   const { elementRef: infoRef, isVisible: infoVisible } = useScrollAnimation();
 
-  // Envoi via EmailJS
+  // Envoi via EmailJS (notification à Rénato + confirmation auto au visiteur)
   const handleEmailJSSubmit = async () => {
     const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+    const notifyTemplateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID_NOTIFY;
+    const autoReplyTemplateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID_AUTOREPLY;
     const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
-    if (!serviceId || !templateId || !publicKey) {
+    if (!serviceId || !notifyTemplateId || !autoReplyTemplateId || !publicKey) {
       throw new Error('Configuration EmailJS manquante');
     }
 
@@ -39,11 +40,13 @@ const Contact = () => {
       service: formData.service,
       budget: formData.budget || 'Non spécifié',
       timeline: formData.timeline || 'Non spécifié',
-      message: formData.message,
-      to_email: 'info@renatotchobo.com'
+      message: formData.message
     };
 
-    await emailjs.send(serviceId, templateId, templateParams, publicKey);
+    await Promise.all([
+      emailjs.send(serviceId, notifyTemplateId, templateParams, publicKey),
+      emailjs.send(serviceId, autoReplyTemplateId, templateParams, publicKey)
+    ]);
 
     setIsSubmitted(true);
     setFormData({
