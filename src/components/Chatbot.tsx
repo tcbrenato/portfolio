@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Bot, User, Minimize2 } from 'lucide-react';
-import { askGroq } from '../api/chatbot';
+import { askGemini } from '../api/chatbot';
 
 interface Message {
   id: string;
@@ -66,7 +66,7 @@ const Chatbot = () => {
     setMessages(prev => [...prev, loadingMessage]);
 
     try {
-      const response = await askGroq(currentInput);
+      const response = await askGemini(currentInput);
 
       // Remplacer le message de chargement par la réponse
       setMessages(prev => {
@@ -146,7 +146,7 @@ const Chatbot = () => {
               </div>
               <div>
                 <h3 className="font-semibold">Assistant IA Rénato</h3>
-                <p className="text-xs text-primary-100">Propulsé par Groq & Llama3</p>
+                <p className="text-xs text-primary-100">Propulsé par Google Gemini</p>
               </div>
             </div>
             <div className="flex items-center space-x-2">
@@ -266,7 +266,7 @@ const Chatbot = () => {
                   </button>
                 </div>
                 <p className="text-xs text-gray-500 mt-2 text-center">
-                  Propulsé par Groq & Llama3
+                  Propulsé par Google Gemini
                 </p>
               </div>
             </>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, MessageCircle, Facebook, Linkedin, Palette, Send, Check, Clock, Star, AlertCircle, Copy, ExternalLink } from 'lucide-react';
+import emailjs from '@emailjs/browser';
+import { Mail, Phone, MapPin, MessageCircle, Facebook, Linkedin, Palette, Send, Check, Clock, Star, AlertCircle, Copy } from 'lucide-react';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 
 const Contact = () => {
@@ -21,250 +22,28 @@ const Contact = () => {
   const { elementRef: formRef, isVisible: formVisible } = useScrollAnimation();
   const { elementRef: infoRef, isVisible: infoVisible } = useScrollAnimation();
 
-  // Solution 1: EmailJS (service gratuit)
+  // Envoi via EmailJS
   const handleEmailJSSubmit = async () => {
-    try {
-      // Simulation d'envoi avec EmailJS
-      const templateParams = {
-        from_name: formData.name,
-        from_email: formData.email,
-        company: formData.company || 'Non spécifiée',
-        service: formData.service,
-        budget: formData.budget || 'Non spécifié',
-        timeline: formData.timeline || 'Non spécifié',
-        message: formData.message,
-        to_email: 'info@renatotchobo.pro'
-      };
+    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
-      // Ici vous devrez configurer EmailJS avec votre clé API
-      console.log('Envoi via EmailJS:', templateParams);
-      
-      // Simulation de succès
-      setTimeout(() => {
-        setIsSubmitted(true);
-        setFormData({
-          name: '',
-          email: '',
-          company: '',
-          service: '',
-          budget: '',
-          message: '',
-          timeline: ''
-        });
-      }, 1000);
-
-    } catch (error) {
-      throw new Error('Erreur EmailJS: ' + error);
+    if (!serviceId || !templateId || !publicKey) {
+      throw new Error('Configuration EmailJS manquante');
     }
-  };
 
-  // Solution 2: Netlify Forms (si hébergé sur Netlify)
-  const handleNetlifySubmit = async () => {
-    try {
-      const formDataNetlify = new FormData();
-      formDataNetlify.append('form-name', 'contact');
-      Object.keys(formData).forEach(key => {
-        formDataNetlify.append(key, formData[key as keyof typeof formData]);
-      });
+    const templateParams = {
+      from_name: formData.name,
+      from_email: formData.email,
+      company: formData.company || 'Non spécifiée',
+      service: formData.service,
+      budget: formData.budget || 'Non spécifié',
+      timeline: formData.timeline || 'Non spécifié',
+      message: formData.message,
+      to_email: 'info@renatotchobo.com'
+    };
 
-      const response = await fetch('/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(formDataNetlify as any).toString()
-      });
-
-      if (response.ok) {
-        setIsSubmitted(true);
-        setFormData({
-          name: '',
-          email: '',
-          company: '',
-          service: '',
-          budget: '',
-          message: '',
-          timeline: ''
-        });
-      } else {
-        throw new Error('Erreur Netlify Forms');
-      }
-    } catch (error) {
-      throw new Error('Erreur Netlify: ' + error);
-    }
-  };
-
-  // Solution 3: Web3Forms (alternative gratuite à Formspree)
-  const handleWeb3FormsSubmit = async () => {
-    const isFormation = formData.service.includes('Formation');
-    
-    const autoReplyMessage = isFormation 
-      ? `Bonjour ${formData.name},\n\nMerci pour votre inscription à la formation :\n${formData.service}\n\n📋 INSTRUCTIONS D'INSCRIPTION :\n1. Versez le montant sur MTN/Moov : +229 01 92 37 77 77\n2. Envoyez le reçu sur WhatsApp : +229 01 92 37 77 77\n3. Vous recevrez votre convocation sous 24h\n\nPour toute question :\n📞 +229 01 92 37 77 77\n✉️ info@renatotchobo.com\n\nCordialement,\nRénato TCHOBO\nSolutions Digitales`
-      : `Bonjour ${formData.name},\n\nMerci pour votre message. J'ai bien reçu votre demande concernant : ${formData.service}.\n\nJe vous recontacterai sous 24h pour discuter de votre projet.\n\nPour toute urgence :\n📞 +229 01 92 37 77 77\n💬 WhatsApp : +229 01 92 37 77 77\n\nCordialement,\nRénato TCHOBO\nSolutions Digitales`;
-
-    const response = await fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify({
-        access_key: '63e99718-9bc7-475c-a348-516deda4a068',
-        name: formData.name,
-        email: formData.email,
-        company: formData.company || 'Non spécifiée',
-        service: formData.service,
-        budget: formData.budget || 'Non spécifié',
-        timeline: formData.timeline || 'Non spécifié',
-        message: formData.message,
-        subject: `${isFormation ? '🎓 Inscription Formation' : '💼 Nouveau Projet'} - ${formData.name}`,
-        from_name: 'Rénato TCHOBO',
-        replyto: formData.email,
-        botcheck: false,
-        // Auto reply
-        auto_reply: true,
-        auto_reply_subject: isFormation 
-          ? `🎓 Confirmation d'inscription - ${formData.service.split('(')[0].replace('Formation - ', '')}`
-          : `✅ Votre demande a bien été reçue`,
-        auto_reply_message: isFormation ? `
-<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
-  <div style="background: #0a1f3c; padding: 20px; border-radius: 8px 8px 0 0; text-align: center;">
-    <h1 style="color: #FCD116; margin: 0; font-size: 24px;">Rénato TCHOBO</h1>
-    <p style="color: #ffffff; margin: 5px 0 0;">Solutions Digitales</p>
-  </div>
-  <div style="padding: 30px; background: #ffffff;">
-    <h2 style="color: #0a1f3c;">🎓 Confirmation d'inscription</h2>
-    <p>Bonjour <strong>${formData.name}</strong>,</p>
-    <p>Votre inscription à la formation suivante a bien été enregistrée :</p>
-    <div style="background: #f5f5f5; padding: 15px; border-left: 4px solid #FCD116; margin: 20px 0;">
-      <strong style="color: #0a1f3c;">${formData.service}</strong>
-    </div>
-    <h3 style="color: #0a1f3c;">📋 Instructions d'inscription :</h3>
-    <ol style="color: #444; line-height: 1.8;">
-      <li>Versez le montant de la formation sur <strong>MTN/Moov Money : +229 01 92 37 77 77</strong></li>
-      <li>Envoyez le reçu de paiement sur <strong>WhatsApp : +229 01 92 37 77 77</strong></li>
-      <li>Vous recevrez votre convocation et le programme détaillé sous <strong>24h</strong></li>
-    </ol>
-    <div style="background: #0a1f3c; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center;">
-      <a href="https://wa.me/22901923777" style="color: #FCD116; text-decoration: none; font-weight: bold;">💬 Nous contacter sur WhatsApp</a>
-    </div>
-    <p style="color: #666; font-size: 14px;">Pour toute question : <a href="mailto:info@renatotchobo.com" style="color: #0a1f3c;">info@renatotchobo.com</a> | +229 01 92 37 77 77</p>
-  </div>
-  <div style="background: #f5f5f5; padding: 15px; text-align: center; border-radius: 0 0 8px 8px;">
-    <p style="color: #888; font-size: 12px; margin: 0;">© 2026 Rénato TCHOBO Solutions Digitales · renatotchobo.com</p>
-  </div>
-</div>` : `
-<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
-  <div style="background: #0a1f3c; padding: 20px; border-radius: 8px 8px 0 0; text-align: center;">
-    <h1 style="color: #FCD116; margin: 0; font-size: 24px;">Rénato TCHOBO</h1>
-    <p style="color: #ffffff; margin: 5px 0 0;">Solutions Digitales</p>
-  </div>
-  <div style="padding: 30px; background: #ffffff;">
-    <h2 style="color: #0a1f3c;">✅ Message bien reçu !</h2>
-    <p>Bonjour <strong>${formData.name}</strong>,</p>
-    <p>Merci pour votre message concernant : <strong>${formData.service}</strong></p>
-    <p>Je vous recontacterai dans les <strong>24 heures</strong> pour discuter de votre projet.</p>
-    <div style="background: #0a1f3c; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center;">
-      <a href="https://wa.me/22901923777" style="color: #FCD116; text-decoration: none; font-weight: bold;">💬 Discuter sur WhatsApp</a>
-    </div>
-    <p style="color: #666; font-size: 14px;">Pour toute urgence : <a href="mailto:info@renatotchobo.com" style="color: #0a1f3c;">info@renatotchobo.com</a> | +229 01 92 37 77 77</p>
-  </div>
-  <div style="background: #f5f5f5; padding: 15px; text-align: center; border-radius: 0 0 8px 8px;">
-    <p style="color: #888; font-size: 12px; margin: 0;">© 2026 Rénato TCHOBO Solutions Digitales · renatotchobo.com</p>
-  </div>
-</div>`,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (data.success) {
-      setIsSubmitted(true);
-      setFormData({
-        name: '',
-        email: '',
-        company: '',
-        service: '',
-        budget: '',
-        message: '',
-        timeline: ''
-      });
-    } else {
-      throw new Error('Erreur Web3Forms: ' + data.message);
-    }
-  };
-
-  // Solution principale avec fallbacks
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitError('');
-    
-    try {
-      // Validation des champs
-      if (!formData.name || !formData.email || !formData.service || !formData.message) {
-        throw new Error('Veuillez remplir tous les champs obligatoires.');
-      }
-
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(formData.email)) {
-        throw new Error('Veuillez entrer une adresse email valide.');
-      }
-
-      // Essayer plusieurs services dans l'ordre
-      try {
-        // Tentative 1: Web3Forms
-        await handleWeb3FormsSubmit();
-      } catch (web3Error) {
-        console.log('Web3Forms failed, trying Formspree...');
-        try {
-          // Tentative 2: Formspree
-          await handleFormspreeSubmit();
-        } catch (formspreeError) {
-          console.log('Formspree failed, trying EmailJS...');
-          try {
-            // Tentative 3: EmailJS
-            await handleEmailJSSubmit();
-          } catch (emailjsError) {
-            console.log('EmailJS failed, trying Netlify...');
-            // Tentative 4: Netlify Forms
-            await handleNetlifySubmit();
-          }
-        }
-      }
-      
-    } catch (error) {
-      console.error('Toutes les méthodes ont échoué:', error);
-      setSubmitError('Impossible d\'envoyer le formulaire. Veuillez utiliser les méthodes de contact alternatives ci-dessous.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  // Fonction Formspree originale
-  const handleFormspreeSubmit = async () => {
-    const response = await fetch('https://formspree.io/f/mandzbrr', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify({
-        name: formData.name,
-        email: formData.email,
-        company: formData.company || 'Non spécifiée',
-        service: formData.service,
-        budget: formData.budget || 'Non spécifié',
-        timeline: formData.timeline || 'Non spécifié',
-        message: formData.message,
-        _replyto: formData.email,
-        _subject: `Nouvelle demande de projet - ${formData.name}`
-      }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error('Erreur Formspree');
-    }
+    await emailjs.send(serviceId, templateId, templateParams, publicKey);
 
     setIsSubmitted(true);
     setFormData({
@@ -276,6 +55,31 @@ const Contact = () => {
       message: '',
       timeline: ''
     });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitError('');
+
+    try {
+      // Validation des champs
+      if (!formData.name || !formData.email || !formData.service || !formData.message) {
+        throw new Error('Veuillez remplir tous les champs obligatoires.');
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        throw new Error('Veuillez entrer une adresse email valide.');
+      }
+
+      await handleEmailJSSubmit();
+    } catch (error) {
+      console.error('Échec de l\'envoi via EmailJS:', error);
+      setSubmitError('Impossible d\'envoyer le formulaire. Veuillez utiliser les méthodes de contact alternatives ci-dessous.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
