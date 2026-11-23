@@ -1,0 +1,32 @@
+{
+  "name": "agenda-crf-perfection",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Agenda électronique de suivi des tâches – CRF Perfection",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "icones": "node scripts/generer-icones.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.119.2",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.9",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.30.6",
+    "read-excel-file": "^9.3.20",
+    "write-excel-file": "^4.1.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.7.0",
+    "sharp": "^0.35.5",
+    "vite": "^6.4.6",
+    "vite-plugin-pwa": "^2.0.0"
+  }
+}
